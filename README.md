@@ -9,8 +9,8 @@ MNIST:    http://yann.lecun.com/exdb/mnist
 Breastmnist:   https://medmnist.com/
              
 ### 2Layer_QNN ###
-In the context of my master's thesis, I also conducted Investigations of two-layer quanvolutions in hybrid networks. The code is comparable to the Masterthesis code, but less intuitive, due to the self-coded hands-on approach, the reshaping of the images for the two-layer quantum circuits.
+In the context of my master's thesis, I also conducted Investigations of two-layer quanvolutions in hybrid networks. CUDA is used to accelerate the training of the network to acceptable training times. The code is comparable to the Masterthesis code, but less intuitive, due to the hands-on approach of the reshaping of the images for the two-layer quantum circuits.
 
 ### Paper Crawler ###
-A small hands-on code of mine for automatic paper search and storage of relevant papers on archive
+A small hands-on code of mine for automatic paper search and storage of relevant papers on arXiv.
 
