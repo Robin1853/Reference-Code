@@ -12,5 +12,5 @@ Breastmnist:   https://medmnist.com/
 In the context of my master's thesis, I also conducted Investigations of two-layer quanvolutions in hybrid networks. CUDA is used to accelerate the training of the network to acceptable training times. The code is comparable to the Masterthesis code, but less intuitive, due to the hands-on approach of the reshaping of the images for the two-layer quantum circuits.
 
 ### Paper Crawler ###
-A small hands-on code of mine for automatic paper search and storage of relevant papers on arXiv.
+A small hands-on code of mine for automatic paper search and storage of information regarding possible relevant papers from arXiv.
 
