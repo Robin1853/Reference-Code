@@ -1,12 +1,12 @@
 # Reference-Code
-This Repository gives some introduction to my past coding experience.
+This Repository gives some introduction to my past coding experience. You are welcome to explore it.
 
 ### Bachelorthesis ###
 The code of my bachelor's thesis. Population finder uses DBSCAN (https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html) to locate and distinguish populations in the Chamaeleon star-forming region. Chamaeleon_plot is the code for visual analysis of the observed stars for different parameters. Chamaeleon_accretors is the code for the analysis of the pre-main-sequence stars and the identification of accretors. The data itself belongs to ESO and is not presented here.
 
 ### Brownian Motion Analysis ###
-Brownian motion analysis is my most recent code, which presents some of my skills in classical unsupervised and supervised learning techniques. The concept involves simulating the 3-dimensional trajectories of multiple particles in a potential field and then providing these trajectories to networks that use different approaches to estimate the field of the potential, its local strength and direction, as well as the overall diffusion constant. 
-The first unsupervised approach is based on filtering noise-dominated frequencies and estimating the local field direction and strength at certain points in space by evaluating the dynamics of trajectories in their proximity via KDTree.
+Brownian Motion Analysis is a recent project showcasing my skills in simulation, signal processing, and both unsupervised and supervised learning. The core idea is to simulate three-dimensional trajectories of particles undergoing Brownian motion in a drift field, and then use these trajectories to reconstruct the underlying field dynamics and diffusion properties.
+In the unsupervised approach, I apply spectral filtering techniques to suppress noise-dominated frequencies in the trajectory data. The local drift field is then estimated using a KDTree-based method, which evaluates the displacement patterns of nearby trajectory segments to infer the field’s direction and strength at given spatial positions. The reconstruction process depends on two key hyperparameters: the radius used for local drift estimation and the weighting ratio between data fidelity and smoothness in the denoised function. These cannot be optimized directly in an unsupervised setting, while all other parameters are selected automatically in the process.
 A supervised approach will follow soon.
 
 ### Masterthesis ###
