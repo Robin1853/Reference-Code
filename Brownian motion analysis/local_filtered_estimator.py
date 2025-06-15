@@ -10,7 +10,7 @@ def plot_welch_spectra(signal, dt, dim_labels=('x', 'y', 'z')):
     dim_labels: axis naming of dimensions
     """
     T, dim = signal.shape
-    assert dim == 3, "3 dimesnions for signal requested"
+    assert dim == 3, "3 dimensions for signal requested"
 
     fs = 1 / dt  # Sampling Rate
     nperseg = min(256, T)  # Segmentlength
