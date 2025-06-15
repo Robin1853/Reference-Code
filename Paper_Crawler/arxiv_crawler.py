@@ -2,7 +2,6 @@
 """
 Created on Tue Mar 14 16:59:00 2023
 
-@author: faierr
 """
 
 import scrapy
