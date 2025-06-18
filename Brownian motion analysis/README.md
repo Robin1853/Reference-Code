@@ -10,11 +10,11 @@ This project simulates 3D Brownian motion of particles under the influence of a 
 - **Drift Field Generation**  
   Visualizes the true analytical drift field used for the simulation.
 
-- **Spectral Filtering (Welch PSD)**  
-  Applies frequency-domain filtering to suppress noise in the trajectory data. The cutoff is optimized by balancing fidelity to the original data and smoothness (low curvature) of the result.
+- **Spectral Filtering (the lowpass_filter_approach)**  
+  Applies frequency-domain filtering to suppress noise in the trajectory data. The cutoff is optimized by balancing fidelity to the original data and smoothness (low curvature) of the result. This approach needs fewer trajectories for drift estimation due to filtering noise.
 
-- **Local Drift Estimation**  
-  Estimates the drift field by evaluating local displacement patterns in a KDTree neighborhood. A radial weighting scheme improves robustness to noise.
+- **Direct Local Drift Estimation (local_denoising_approach)**  
+  Estimates the drift field by evaluating local displacement patterns in a KDTree neighborhood. A radial weighting scheme improves robustness to noise. Nevertheless, more trajectories are needed for accurate drift estimation.
 
 - **Error Analysis**  
   Computes the mean squared error between the true and estimated drift field, and visualizes both fields for comparison.
@@ -24,7 +24,8 @@ This project simulates 3D Brownian motion of particles under the influence of a 
 - `main_simulation.py` – Executes the simulation pipeline, from trajectory generation to drift estimation.
 - `Drift_field.py` – Defines and visualizes the true underlying drift field.
 - `Trajectory_calculator.py` – Generates Brownian motion trajectories using stochastic integration.
-- `local_filtered_estimator.py` – Contains spectral filtering, KDTree-based local estimation, and visualization of the reconstructed field.
+- `lowpassfilter_approach.py` – Contains spectral filtering, KDTree-based local estimation, visualization of the reconstructed field, and diffusion estimation for homogeneous, diffusion field estimation for inhomogeneous fields.
+- `local_denoising_approach.py` - Contains KDTree-based local estimation, visualization of the reconstructed field, Wiener filtered Trajectory, and diffusion estimation for homogeneous, diffusion field estimation for inhomogeneous fields.
 
 ## Methods Used
 
