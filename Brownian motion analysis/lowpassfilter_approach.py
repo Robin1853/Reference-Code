@@ -195,16 +195,16 @@ def diffusion_estimation(signal, smoothed, dt):
     else:
         print(f"Diffusion is probably inhomogeneous: D = {mean_D:.4f} ± {std_D:.4f}")
 
-    #Histogram plot
-    plt.figure(figsize=(8, 4))
-    plt.hist(D_vals, bins=15, color='skyblue', edgecolor='k')
-    plt.axvline(mean_D, color='r', linestyle='--', label=f"Mean D = {mean_D:.3f}")
-    plt.xlabel("Estimated D per trajectory")
-    plt.ylabel("Frequency")
-    plt.title("Histogram of Diffusion Estimates")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
+        #field plot
+        plt.figure(figsize=(8, 4))
+        plt.hist(D_vals, bins=15, color='skyblue', edgecolor='k')
+        plt.axvline(mean_D, color='r', linestyle='--', label=f"Mean D = {mean_D:.3f}")
+        plt.xlabel("Estimated D per trajectory")
+        plt.ylabel("Frequency")
+        plt.title("Histogram of Diffusion Estimates")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
 
     return mean_D, std_D, D_vals
 
