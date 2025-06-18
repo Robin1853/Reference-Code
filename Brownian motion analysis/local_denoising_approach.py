@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.spatial import KDTree
 import matplotlib.pyplot as plt
+from sympy.codegen.ast import continue_
+
 
 ###Define Grid
 def Grid(space_borders, grid_step = 0.1):
@@ -32,11 +34,15 @@ def trajectory_steps(signal):
 
     return all_starts, all_steps
 
-###define Neighborhood
+###define drift Neighborhood
 def KDTree_neighbors(tree, local_point, steps, starts, radius):
     indices = tree.query_ball_point(local_point, r = radius)
+    # if len(indices) == 0:
+    #     return np.zeros(steps.shape[1]), [], [], []
+
     if len(indices) == 0:
-        return np.zeros(steps.shape[1]), [], [], []
+        dim = steps.shape[1]
+        return np.zeros(dim), 0.0
 
     neighbor_steps = steps[indices]
     neighbor_starts = starts[indices]
@@ -60,10 +66,34 @@ def drift_field_plot(X, Y, Z, U, V, W):
     ax.set_zlabel("z")
     plt.tight_layout()
 
-###First lokal drift estimation with KDTree
-def local_drift_estimator(signal, dt = 0.1, space_borders = None, grid_step = 0.1, radii_ratio = 1):
+###drift estimation
+def drift_estimation(neighbor_starts, neighbor_steps, local_point, radius, dt, U,V, W, i, j, k):
+    dists = np.linalg.norm(neighbor_starts - local_point, axis=1)
+    weighting = np.exp(-(dists ** 2) / (2 * (radius / 2) ** 2))
+    weight_normed = weighting / np.sum(weighting)
+    weighted_drift = np.sum(neighbor_steps * weight_normed[:, None], axis=0) / dt
+    U[i, j, k], V[i, j, k], W[i, j, k] = weighted_drift
+    return U, V, W, weighted_drift
 
+###diffusion field plot
+def diffusion_field_plot(X, Y, Z, D_field):
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(111, projection='3d')
+    sc = ax.scatter(X.flatten(), Y.flatten(), Z.flatten(), c=D_field.flatten(), cmap='plasma', s=30)
+    ax.set_xlim([-1, 1])
+    ax.set_ylim([-1, 1])
+    ax.set_zlim([-1, 1])
+    fig.colorbar(sc, ax=ax, label='estimated diffusion')
+    ax.set_title("Gaussian averaged local diffusion")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    ax.set_zlabel("z")
+    plt.tight_layout()
+
+###First lokal drift estimation with KDTree
+def local_estimator(signal, dt = 0.1, space_borders = None, grid_step = 0.1, radii_ratio = 1):
     X, Y, Z, U, V, W = Grid(space_borders=space_borders, grid_step=grid_step)
+    D_field = np.zeros_like(X)
 
     radius = radii_ratio * np.sqrt(3 * grid_step ** 2)
 
@@ -78,24 +108,39 @@ def local_drift_estimator(signal, dt = 0.1, space_borders = None, grid_step = 0.
 
                 neighbor_steps, neighbor_starts = KDTree_neighbors(tree, local_point, steps, starts, radius)
 
-                dists = np.linalg.norm(neighbor_starts - local_point, axis=1)
-                weighting = np.exp(-(dists**2)/(2*(radius/2)**2))
-                weight_normed = weighting / np.sum(weighting)
-                weighted_drift = np.sum(neighbor_steps * weight_normed[:, None], axis = 0)/dt
-                U[i, j, k], V[i, j, k], W[i, j, k] = weighted_drift
+                #drift estimation
+                U, V, W, weighted_drift = drift_estimation(neighbor_starts, neighbor_steps, local_point, radius, dt, U, V, W, i, j, k)
                 all_drifts.append(weighted_drift)
-    drift_field_plot(X, Y, Z, U, V, W)
 
+                #diffusion estimation
+                noise = neighbor_steps - weighted_drift * dt
+                squared_noise = np.sum(noise**2, axis=1)
+                D_local = np.mean(squared_noise) / (2 * dt**2 * 3)
+                D_field[i, j, k] = D_local
+
+    all_drifts = np.array(all_drifts)
+    drift_field_plot(X, Y, Z, U, V, W)
+    drift_mean = np.linalg.norm(np.mean(all_drifts, axis = 0))
+    drift_std = np.linalg.norm(np.std(all_drifts, axis = 0))
+    if drift_std/drift_mean > 0.1:
+        print(f"Global drift is inhomogeneous: {drift_mean:.4f} ± {drift_std:.4f}")
+    else:
+        print(f"Global drift appears homogeneous: {drift_mean:.4f} ± {drift_std:.4f}")
+
+    diffusion_field_plot(X, Y, Z, D_field)
+    D_mean = np.mean(D_field)
+    D_std = np.std(D_field)
+    if D_std/D_mean > 0.1:
+        print(f"Diffusion is inhomogeneous: {D_mean:.4f} ± {D_std:.4f}")
+    else:
+        print(f"Diffusion is homogeneous: {D_mean:.4f} ± {D_std:.4f}")
     return np.array(all_drifts), U, V, W
 
-
-
-
-###Diffusion estimation through drift subtraction
 
 ###Denoising with wiener filter
 
 ###Meassuring accuracy of estimates
 def score(true_drifts, est_drifts):
     mse = np.mean((true_drifts - est_drifts) ** 2)
+    print(f"MSE: {mse:.4f}")
     return mse
